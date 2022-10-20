@@ -7,6 +7,7 @@ const replay = document.getElementById("replay");
 
 class Board {
   #playerMove = 0;
+  #nummoves = 0;
   
   constructor(row, col, color0="red", color1="yellow", winnum = 4) {
     this.rowsize = row;
@@ -109,13 +110,14 @@ class Board {
     this.grid[row][col] = player;
     let cell = document.getElementById(row+"-"+col);
     cell.classList.add("p"+player);
+    this.#nummoves += 1;
     
     // update hud
     moveplayer.innerText = this.colors[this.#playerMove];
-    movecount.innerText = parseInt(movecount.innerText) + 1;
+    movecount.innerText = this.#nummoves;
 
     // check for draw
-    if (movecount.innerText == 42) {
+    if (this.#nummoves == 42) {
       alerthtml.innerText = "Draw!";
       return true;
     }
