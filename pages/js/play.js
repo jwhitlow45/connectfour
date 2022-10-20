@@ -2,6 +2,7 @@ const tablehtml = document.getElementById("board");
 const moveplayer = document.getElementById("move-player");
 const movecount = document.getElementById("move-count");
 const alerthtml = document.getElementById("alert");
+const replay = document.getElementById("replay");
 
 class Board {
   #playerMove = 0;
@@ -138,4 +139,8 @@ function handleClick(eventid) {
   }
   let coords = eventid.split("-");
   gameOver = GameBoard.move(parseInt(coords[1]));
+  if (gameOver) {
+    replay.innerText = "Click here to play again!";
+    replay.onclick = function() { window.location.reload(); }
+  }
 }
