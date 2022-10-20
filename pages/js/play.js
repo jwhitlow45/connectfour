@@ -2,6 +2,7 @@ const tablehtml = document.getElementById("board");
 const moveplayer = document.getElementById("move-player");
 const movecount = document.getElementById("move-count");
 const alerthtml = document.getElementById("alert");
+const timecount = document.getElementById("time-count");
 const replay = document.getElementById("replay");
 
 class Board {
@@ -144,3 +145,12 @@ function handleClick(eventid) {
     replay.onclick = function() { window.location.reload(); }
   }
 }
+
+var pageloadtime = new Date();
+let gametime = setInterval(function() {
+  let now = new Date();
+  let secs = (now.getTime() - pageloadtime.getTime()) / 1000;
+  let strMins = String(Math.floor(secs / 60)).padStart(2, '0');
+  let strSecs = String(Math.floor(secs % 60)).padStart(2, '0');
+  timecount.innerText = strMins + ":" + strSecs;
+}, 1000);
