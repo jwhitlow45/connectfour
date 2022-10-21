@@ -26,8 +26,12 @@ class Board {
     this.#playerMove = Math.abs(this.#playerMove - 1);
     return Math.abs(this.#playerMove - 1);
   }
+
+  peekPlayerToMove() {
+    return this.#playerMove;
+  }
   
-  #findMoveRow(col) {
+  findMoveRow(col) {
     for (let i = this.rowsize - 1; i >=0; i--) {
       if (this.grid[i][col] != undefined) {
         continue;
@@ -45,7 +49,9 @@ class Board {
           let td = document.createElement("td");
           td.classList.add("cell");
           td.id = i+"-"+j;
-          td.onclick = function() { handleClick(this.id); };
+          td.onclick = function() { handleClick(this.id); showPlacement(this.id)};
+          td.onmouseenter = function() { showPlacement(this.id); }
+          td.onmouseleave = function() { hidePlacement(this.id); }
           row.appendChild(td);
       }
       tablehtml.appendChild(row);
@@ -93,7 +99,7 @@ class Board {
   }
 
   move(col) {
-    let row = this.#findMoveRow(col);
+    let row = this.findMoveRow(col);
 
     // verify move is valid
     if (row == -1) {
@@ -146,6 +152,32 @@ function handleClick(eventid) {
     replay.innerText = "Click here to play again!";
     replay.onclick = function() { window.location.reload(); }
   }
+}
+
+function showPlacement(elemId) {
+  // create div showing where current move will be played
+  const moveindicator = document.createElement("div");
+  moveindicator.style.borderRadius = "inherit";
+  moveindicator.style.opacity = 0.25;
+  moveindicator.style.backgroundColor = GameBoard.colors[GameBoard.peekPlayerToMove()];
+  moveindicator.style.height = "inherit"
+  moveindicator.style.width = "inherit"
+
+  // get move placement
+  let col = elemId.split('-')[1];
+  let row = GameBoard.findMoveRow(parseInt(col));
+
+  // put indicator in target cell
+  const targethtml = document.getElementById(row + "-" + col);
+  targethtml.appendChild(moveindicator);
+}
+
+function hidePlacement(elemId) { 
+  let col = elemId.split('-')[1];
+  let row = GameBoard.findMoveRow(parseInt(col));
+
+  // remove move indicator
+  document.getElementById(row + "-" + col).innerHTML = "";
 }
 
 var pageloadtime = new Date();
