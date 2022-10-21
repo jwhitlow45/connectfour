@@ -6,24 +6,24 @@
     <link rel="stylesheet" href="../index.css">
     <title>Connect 4 - Options</title>
   </head>
-  <body onload="onPageLoad();">
+  <body>
     <div id="title">Options</div>
     <table id="menu">
       <tr>
-        <td><button id="board-size" class="menu-button" onclick="nextBoardSize();">Size</button></td>
+        <td><button id="board-size" class="menu-button">Size</button></td>
       </tr>
       <tr>
-        <td><button id="board-color" class="menu-button" onclick="nextColor(this.id);">Board</button></td>
+        <td><button id="board-color" class="menu-button">Board</button></td>
       </tr>
       <tr>
-        <td><button id="p0-color" class="menu-button" onclick="nextColor(this.id);">Player 1</button></td>
+        <td><button id="p0-color" class="menu-button">Player 1</button></td>
       </tr>
       <tr>
-        <td><button id="p1-color" class="menu-button" onclick="nextColor(this.id);">Player 2</button></td>
+        <td><button id="p1-color" class="menu-button">Player 2</button></td>
       </tr>
     </table>
-    <div><a href="../index.html"><img id="back" src="../img/back.webp"></a></div>
+    <div><a href="../index.html"><img id="back-button" src="../img/back.webp"></a></div>
     
-    <script src="./js/options.js"></script>
+    <script src="./js/options.js" type="module"></script>
   </body>
 </html>

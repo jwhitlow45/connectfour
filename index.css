@@ -50,7 +50,7 @@ td {
   transform: scale(1.05); 
 }
 
-#back {
+#back-button {
   display: flex;
   margin: 10px auto;
   width: 50px;

@@ -1,3 +1,5 @@
+import { colors, board_sizes } from './config.js';
+
 const tablehtml = document.getElementById("board");
 const moveplayer = document.getElementById("move-player");
 const movecount = document.getElementById("move-count");
@@ -9,7 +11,7 @@ class Board {
   #playerMove = 0;
   #nummoves = 0;
   
-  constructor(row, col, color0="red", color1="yellow", winnum = 4) {
+  constructor(row, col, color0, color1, winnum = 4) {
     this.rowsize = row;
     this.colsize = col;
     this.grid = Array.from(Array(row), () => new Array(col));
@@ -19,7 +21,17 @@ class Board {
 
   init() {
     moveplayer.innerText = this.colors[this.#playerMove];
+    this.#setColors();
     this.#drawBoard();
+  }
+
+  #setColors() {
+    let stylesheet = document.styleSheets[0];
+
+    stylesheet.insertRule(".p0 { background-color: " + this.colors[0] +"; }", stylesheet.cssRules.length);
+    stylesheet.insertRule(".p1 { background-color: " + this.colors[1] +"; }", stylesheet.cssRules.length);
+    stylesheet.insertRule(".cell { border: 3px " + colors[localStorage.getItem("board-color")] + " solid; }", stylesheet.cssRules.length);
+    
   }
 
   #getPlayerToMove() {
@@ -49,7 +61,7 @@ class Board {
           let td = document.createElement("td");
           td.classList.add("cell");
           td.id = i+"-"+j;
-          td.onclick = function() { handleClick(this.id); showPlacement(this.id)};
+          td.addEventListener('click', function() { handleClick(this.id); showPlacement(this.id)});
           td.onmouseenter = function() { showPlacement(this.id); }
           td.onmouseleave = function() { hidePlacement(this.id); }
           row.appendChild(td);
@@ -103,7 +115,6 @@ class Board {
 
     // verify move is valid
     if (row == -1) {
-      console.log("Invalid move!");
       alerthtml.innerText = "Invalid Move!";
       return;
     }
@@ -139,7 +150,10 @@ class Board {
 }
 
 var gameOver = false;
-const GameBoard = new Board(6, 7);
+const board_size = board_sizes[localStorage.getItem("board-size")].split('x');
+const color0 = colors[localStorage.getItem("p0-color")];
+const color1 = colors[localStorage.getItem("p1-color")];
+const GameBoard = new Board(parseInt(board_size[0]), parseInt(board_size[1]), color0, color1);
 GameBoard.init();
 
 function handleClick(eventid) {
