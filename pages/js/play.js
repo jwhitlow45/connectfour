@@ -165,6 +165,11 @@ function handleClick(eventid) {
   if (gameOver) {
     replay.innerText = "Click here to play again!";
     replay.onclick = function() { window.location.reload(); }
+    let cells = document.getElementsByClassName('cell');
+    for (let cell of cells) {
+      let newcell = cell.cloneNode(true);
+      cell.parentNode.replaceChild(newcell, cell);
+    }
   }
 }
 
@@ -183,6 +188,8 @@ function showPlacement(elemId) {
 
   // put indicator in target cell
   const targethtml = document.getElementById(row + "-" + col);
+  if (targethtml == null) return;
+
   targethtml.appendChild(moveindicator);
 }
 
@@ -191,7 +198,10 @@ function hidePlacement(elemId) {
   let row = GameBoard.findMoveRow(parseInt(col));
 
   // remove move indicator
-  document.getElementById(row + "-" + col).innerHTML = "";
+  const targethtml = document.getElementById(row + "-" + col)
+  if (targethtml == null) return;
+  
+  targethtml.innerHTML = "";
 }
 
 var pageloadtime = new Date();
