@@ -170,6 +170,7 @@ class Board {
     this.grid = NewBoard.grid;
     tablehtml.innerHTML = "";
     this.drawBoard();
+    moveplayer.innerText = this.colors[this.playerMove];
   }
 }
 
@@ -182,9 +183,6 @@ GameBoard.init();
 flipbutton.addEventListener('click', function() { GameBoard.flip() });
 
 function handleClick(eventid) {
-  if (gameOver) {
-    return;
-  }
   let coords = eventid.split("-");
   gameOver = GameBoard.move(parseInt(coords[1]));
   if (gameOver) {
