@@ -6,9 +6,9 @@ const movecount = document.getElementById("move-count");
 const alerthtml = document.getElementById("alert");
 const timecount = document.getElementById("time-count");
 const replay = document.getElementById("replay");
+const flipbutton = document.getElementById("flip-button");
 
 class Board {
-  #playerMove = 0;
   #nummoves = 0;
   
   constructor(row, col, color0, color1, winnum = 4) {
@@ -17,12 +17,13 @@ class Board {
     this.grid = Array.from(Array(row), () => new Array(col));
     this.colors = [color0, color1];
     this.winnum = winnum;
+    this.playerMove = 0;
   }
 
   init() {
-    moveplayer.innerText = this.colors[this.#playerMove];
+    moveplayer.innerText = this.colors[this.playerMove];
     this.#setColors();
-    this.#drawBoard();
+    this.drawBoard();
   }
 
   #setColors() {
@@ -35,12 +36,12 @@ class Board {
   }
 
   #getPlayerToMove() {
-    this.#playerMove = Math.abs(this.#playerMove - 1);
-    return Math.abs(this.#playerMove - 1);
+    this.playerMove = Math.abs(this.playerMove - 1);
+    return Math.abs(this.playerMove - 1);
   }
 
   peekPlayerToMove() {
-    return this.#playerMove;
+    return this.playerMove;
   }
   
   findMoveRow(col) {
@@ -54,16 +55,21 @@ class Board {
     return -1;
   }
 
-  #drawBoard() {
+  drawBoard() {
     for (let i = 0; i < this.numrows; i++) {
       let row = document.createElement("tr");
       for (let j = 0; j < this.numcols; j++) {
           let td = document.createElement("td");
           td.classList.add("cell");
           td.id = i+"-"+j;
-          td.addEventListener('click', function() { handleClick(this.id); showPlacement(this.id)});
+          td.addEventListener('click', function() { handleClick(this.id); showPlacement(this.id); });
           td.onmouseenter = function() { showPlacement(this.id); }
           td.onmouseleave = function() { hidePlacement(this.id); }
+          
+          // add discs to cell if needed
+          if (this.grid[i][j] == 0) td.classList.add('p0');
+          else if (this.grid[i][j] == 1) td.classList.add('p1');
+          
           row.appendChild(td);
       }
       tablehtml.appendChild(row);
@@ -130,7 +136,7 @@ class Board {
     this.#nummoves += 1;
     
     // update hud
-    moveplayer.innerText = this.colors[this.#playerMove];
+    moveplayer.innerText = this.colors[this.playerMove];
     movecount.innerText = this.#nummoves;
 
     // check for draw
@@ -148,6 +154,23 @@ class Board {
     return false;
   }
 
+  flip() {
+    let NewBoard = new Board(this.numrows, this.numcols, this.color0, this.color1);
+    
+    // flip board by playing moves in new board from top of each column to bottom
+    for (let i = 0; i < this.numrows; i++) {
+      for (let j = 0; j < this.numcols; j++) {
+        if (this.grid[i][j] == undefined) continue;
+
+        NewBoard.playerMove = this.grid[i][j];
+        NewBoard.move(j);
+      }
+    }
+
+    this.grid = NewBoard.grid;
+    tablehtml.innerHTML = "";
+    this.drawBoard();
+  }
 }
 
 var gameOver = false;
@@ -156,6 +179,7 @@ const color0 = colors[localStorage.getItem("p0-color")];
 const color1 = colors[localStorage.getItem("p1-color")];
 const GameBoard = new Board(parseInt(board_size[0]), parseInt(board_size[1]), color0, color1);
 GameBoard.init();
+flipbutton.addEventListener('click', function() { GameBoard.flip() });
 
 function handleClick(eventid) {
   if (gameOver) {
@@ -164,8 +188,11 @@ function handleClick(eventid) {
   let coords = eventid.split("-");
   gameOver = GameBoard.move(parseInt(coords[1]));
   if (gameOver) {
+    // show button to play again
     replay.innerText = "Click here to play again!";
     replay.onclick = function() { window.location.reload(); }
+
+    // remove event listeners once game is over by cloning and replacing cells
     let cells = document.getElementsByClassName('cell');
     for (let cell of cells) {
       let newcell = cell.cloneNode(true);
