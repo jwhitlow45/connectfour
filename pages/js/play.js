@@ -12,8 +12,8 @@ class Board {
   #nummoves = 0;
   
   constructor(row, col, color0, color1, winnum = 4) {
-    this.rowsize = row;
-    this.colsize = col;
+    this.numrows = row;
+    this.numcols = col;
     this.grid = Array.from(Array(row), () => new Array(col));
     this.colors = [color0, color1];
     this.winnum = winnum;
@@ -44,7 +44,7 @@ class Board {
   }
   
   findMoveRow(col) {
-    for (let i = this.rowsize - 1; i >=0; i--) {
+    for (let i = this.numrows - 1; i >=0; i--) {
       if (this.grid[i][col] != undefined) {
         continue;
       }
@@ -55,9 +55,9 @@ class Board {
   }
 
   #drawBoard() {
-    for (let i = 0; i < this.rowsize; i++) {
+    for (let i = 0; i < this.numrows; i++) {
       let row = document.createElement("tr");
-      for (let j = 0; j < this.colsize; j++) {
+      for (let j = 0; j < this.numcols; j++) {
           let td = document.createElement("td");
           td.classList.add("cell");
           td.id = i+"-"+j;
@@ -71,7 +71,7 @@ class Board {
   }
 
   #inBounds(row, col) {
-    return row >= 0 && col >= 0 && row < this.rowsize && col < this.colsize;
+    return row >= 0 && col >= 0 && row < this.numrows && col < this.numcols;
   }
 
   #checkWin(row, col) {
@@ -147,6 +147,7 @@ class Board {
 
     return false;
   }
+
 }
 
 var gameOver = false;
