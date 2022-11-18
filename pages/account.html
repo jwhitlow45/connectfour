@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta lang="en">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./css/account.css">
+    <link rel="stylesheet" href="./../index.css">
+    <title>Connect 4 - Account</title>
+  </head>
+  <body>
+    <div id="title">Account</div>
+    <form action="login.php" method="POST">
+      <table id="menu">
+        <tr><td><input type="text" class="menu-button" placeholder="username"></td></tr>
+        <tr><td><input type="password" class="menu-button" placeholder="password"></td></tr>
+        <tr><td><input type="submit" value="Login" class="menu-button"></input></td></tr>
+      </table>
+    </form>
+    <form action="register.php" method="POST">
+      <table id="menu" class="register">
+        <tr><td><input type="text" class="menu-button" placeholder="username"></td></tr>
+        <tr><td><input type="password" class="menu-button" placeholder="password"></td></tr>
+        <tr><td><input type="submit" value="Register" class="menu-button"></input></td></tr>
+      </table>
+    </form>
+    <div><a href="../index.html"><img id="back-button" src="../img/back.webp"></a></div>
+    <script src="./js/account.js"></script>
+  </body>
+</html>
