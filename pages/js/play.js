@@ -201,6 +201,14 @@ function handleClick(eventid) {
   if (!gameOver) {
     let coords = eventid.split("-");
     gameOver = GameBoard.move(parseInt(coords[1]));
+
+    if (!GameBoard.p0flip && GameBoard.peekPlayerToMove() == 0) {
+      flipbutton.style.opacity = '50%';
+    } else if (!GameBoard.p1flip && GameBoard.peekPlayerToMove() == 1) {
+      flipbutton.style.opacity = '50%';
+    } else {
+      flipbutton.style.opacity = '100%';
+    }
   }
   if (gameOver) {
     handleGameOver();
@@ -223,6 +231,7 @@ function handleFlip() {
     GameBoard.p1flip = false;
   }
   GameBoard.flip();
+  flipbutton.style.opacity = '50%';
   alerthtml.innerHTML = "Player " + GameBoard.colors[player] + " used flip!";
 
   let winners = [false, false];
