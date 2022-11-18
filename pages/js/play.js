@@ -17,6 +17,8 @@ class Board {
     this.grid = Array.from(Array(row), () => new Array(col));
     this.colors = [color0, color1];
     this.winnum = winnum;
+    this.p0flip = true;
+    this.p1flip = true;
     this.playerMove = 0;
   }
 
@@ -80,7 +82,7 @@ class Board {
     return row >= 0 && col >= 0 && row < this.numrows && col < this.numcols;
   }
 
-  #checkWin(row, col) {
+  checkWin(row, col) {
     // check every direction (left, right, up, down, diags) for win
     let moves = [[0,1], [1,0], [1,1], [1,-1]];
     let player = this.grid[row][col];
@@ -146,7 +148,7 @@ class Board {
     }
 
     // check for win
-    if (this.#checkWin(row, col)) {
+    if (this.checkWin(row, col)) {
       alerthtml.innerText = this.colors[player] + " wins!";
       return true;
     }
@@ -180,23 +182,76 @@ const color0 = colors[localStorage.getItem("p0-color")];
 const color1 = colors[localStorage.getItem("p1-color")];
 const GameBoard = new Board(parseInt(board_size[0]), parseInt(board_size[1]), color0, color1);
 GameBoard.init();
-flipbutton.addEventListener('click', function() { GameBoard.flip() });
+flipbutton.addEventListener('click', function() { handleFlip(); });
+
+function handleGameOver() {
+  // show button to play again
+  replay.innerText = "Click here to play again!";
+  replay.onclick = function() { window.location.reload(); }
+
+  // remove event listeners once game is over by cloning and replacing cells
+  let cells = document.getElementsByClassName('cell');
+  for (let cell of cells) {
+    let newcell = cell.cloneNode(true);
+    cell.parentNode.replaceChild(newcell, cell);
+  }
+}
 
 function handleClick(eventid) {
-  let coords = eventid.split("-");
-  gameOver = GameBoard.move(parseInt(coords[1]));
+  if (!gameOver) {
+    let coords = eventid.split("-");
+    gameOver = GameBoard.move(parseInt(coords[1]));
+  }
   if (gameOver) {
-    // show button to play again
-    replay.innerText = "Click here to play again!";
-    replay.onclick = function() { window.location.reload(); }
+    handleGameOver();
+  }
+}
 
-    // remove event listeners once game is over by cloning and replacing cells
-    let cells = document.getElementsByClassName('cell');
-    for (let cell of cells) {
-      let newcell = cell.cloneNode(true);
-      cell.parentNode.replaceChild(newcell, cell);
+function handleFlip() {
+  let player = GameBoard.peekPlayerToMove();
+  if (player == 0) { // player 0
+    if (!GameBoard.p0flip) { // check if powerup has been used
+      alerthtml.innerHTML = "Player " + GameBoard.colors[player] + " flip already used!";
+      return;
+    }
+    GameBoard.p0flip = false; // set powerup as used
+  } else { // player 1
+    if (!GameBoard.p1flip) {
+      alerthtml.innerHTML = "Player " + GameBoard.colors[player] + " flip already used!";
+      return;
+    }
+    GameBoard.p1flip = false;
+  }
+  GameBoard.flip();
+  alerthtml.innerHTML = "Player " + GameBoard.colors[player] + " used flip!";
+
+  let winners = [false, false];
+
+  // check entire board for wins due to flip
+  for (let i = 0; i < GameBoard.numrows; i++) {
+    for (let j = 0; j < GameBoard.numcols; j++) {
+      // skip empty cells
+      if (GameBoard.grid[i][j] == undefined) continue;
+      // check for win in populated cells
+      if (GameBoard.checkWin(i, j)) {
+        winners[GameBoard.grid[i][j]] = true;
+      }
     }
   }
+
+  // if neither player wins then terminate early
+  if (!(winners[0] || winners[1])) return;
+
+  // check for draw then winner
+  if (winners[0] && winners[1]) {
+    alerthtml.innerText = "Draw!";
+  } else if (winners[0]) {
+    alerthtml.innerText = GameBoard.colors[0] + " wins!";
+  } else {
+    alerthtml.innerText = GameBoard.colors[1] + " wins!";
+  }
+  gameOver = true;
+  handleGameOver();
 }
 
 function showPlacement(elemId) {
@@ -216,7 +271,7 @@ function showPlacement(elemId) {
   const targethtml = document.getElementById(row + "-" + col);
   if (targethtml == null) return;
 
-  targethtml.appendChild(moveindicator);
+  targethtml.replaceChildren(moveindicator);
 }
 
 function hidePlacement(elemId) { 
