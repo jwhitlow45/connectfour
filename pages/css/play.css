@@ -31,3 +31,9 @@ html {
   height: 85px;
   border-radius: 50%;
 }
+
+#back-button {
+  display: flex;
+  margin: 10px auto;
+  width: 50px;
+}
