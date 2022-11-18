@@ -32,6 +32,15 @@ td {
   height: 85px;
 }
 
+@keyframes fadeIn {
+  0% {
+    opacity: 0%;
+  }
+  100% {
+    opacity: 100%;
+  }
+}
+
 .menu-button {
   text-decoration: none;
   font-size: 50px;
@@ -43,6 +52,7 @@ td {
   margin: auto 20px;
   border: none;
 
+  animation: fadeIn 0.5s;
   transition: all .2s ease-in-out; 
 }
 
