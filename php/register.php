@@ -10,7 +10,7 @@ $username_err = $password_err = $password_confirm_err = "";
 // validate request method
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // validate username
-    if (empty(trim($POST["username"]))) {
+    if (empty(trim($_POST["username"]))) {
         $username_err = "Please enter a username.";
     } elseif (!preg_match('/^[a-zA-Z0-9_]+$/', trim($_POST["username"]))) { //alphanumeric regex that allows underscores
         $username_err = "Username can only contain letters, numbers, and underscores.";
@@ -50,19 +50,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     // Validate confirm password
-    if(empty(trim($_POST["confirm_password"]))){
-        $confirm_password_err = "Please confirm password.";     
+    if(empty(trim($_POST["password-confirm"]))){
+        $password_confirm_err = "Please confirm password.";     
     } else{
-        $confirm_password = trim($_POST["confirm_password"]);
-        if(empty($password_err) && ($password != $confirm_password)){
-            $confirm_password_err = "Password did not match.";
+        $password_confirm = trim($_POST["password-confirm"]);
+        if(empty($password_err) && ($password != $password_confirm)){
+            $password_confirm_err = "Password did not match.";
         }
     }
-    
+
     // Check input errors before inserting in database
-    if(empty($username_err) && empty($password_err) && empty($confirm_password_err)){
+    if(empty($username_err) && empty($password_err) && empty($password_confirm_err)){
         // Prepare an insert statement
         $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        echo $sql;
         if($stmt = mysqli_prepare($conn, $sql)){
             // Bind variables to the prepared statement as parameters
             mysqli_stmt_bind_param($stmt, "ss", $param_username, $param_password);
@@ -72,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
                 // Redirect to login page
-                header("location: pages/account.html");
+                header("location: ../pages/account.html");
             } else{
                 echo "Something went wrong. Please try again later.";
             }
