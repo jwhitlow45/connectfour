@@ -1,7 +1,7 @@
 <?php
 
 function db_connect() {
-    $db_params = parse_ini_file('/opt/lampp/htdocs/csci130/connectfour/php/dbcredentials.ini');
+    $db_params = parse_ini_file('./dbcredentials.ini');
 
     define('DB_SERVER', $db_params['server']);
     define('DB_USERNAME', $db_params['username']);
