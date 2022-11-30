@@ -9,17 +9,18 @@
   </head>
   <body>
     <div id="title">Account</div>
-    <form action="login.php" method="POST">
+    <form action="./../php/login.php" method="POST">
       <table id="menu">
-        <tr><td><input type="text" class="menu-button" placeholder="username"></td></tr>
-        <tr><td><input type="password" class="menu-button" placeholder="password"></td></tr>
+        <tr><td><input name="username" type="text" class="menu-button" placeholder="username"></td></tr>
+        <tr><td><input name="password" type="password" class="menu-button" placeholder="password"></td></tr>
         <tr><td><input type="submit" value="Login" class="menu-button"></input></td></tr>
       </table>
     </form>
-    <form action="register.php" method="POST">
+    <form action="./../php/register.php" method="POST">
       <table id="menu" class="register">
-        <tr><td><input type="text" class="menu-button" placeholder="username"></td></tr>
-        <tr><td><input type="password" class="menu-button" placeholder="password"></td></tr>
+        <tr><td><input name="username" type="text" class="menu-button" placeholder="username"></td></tr>
+        <tr><td><input name="password" type="password" class="menu-button" placeholder="password"></td></tr>
+        <tr><td><input name="password-confirm" type="password" class="menu-button" placeholder="confirm password"></td></tr>
         <tr><td><input type="submit" value="Register" class="menu-button"></input></td></tr>
       </table>
     </form>
