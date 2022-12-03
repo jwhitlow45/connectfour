@@ -1,0 +1,12 @@
+.menu-button {
+  max-width: 50%;
+}
+
+#menu {
+  margin-bottom: 10px;
+}
+
+.menu-button::placeholder {
+  text-align: left;
+  color: #13284c;
+}
