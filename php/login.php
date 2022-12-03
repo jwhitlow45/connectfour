@@ -9,7 +9,7 @@ session_start();
 
 // redirect to account page if logged in
 if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
-    header("location: ../pages/account.html");
+    header("location: ../pages/account.php?message=loggedin");
     exit;
 }
 
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($username_err) && empty($password_err)) {
         // Prepare a select statement
         $sql = "SELECT id, username, password FROM users WHERE username = ?";
-
+        echo $sql;
         if ($stmt = mysqli_prepare($conn, $sql)) {
             // Bind variables to the prepared statement as parameters
             mysqli_stmt_bind_param($stmt, "s", $param_username);
@@ -64,9 +64,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $_SESSION["loggedin"] = true;
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;
-
-                            // Redirect user to welcome page
-                            header("location: welcome.php");
+                            // Redirect user to account page
+                            header('location: ../pages/account.php?message=loggedin');
                         } else {
                             // Password is not valid, display a generic error message
                             $login_err = "Invalid username or password.";
@@ -77,7 +76,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $login_err = "Invalid username or password.";
                 }
             } else {
-                echo "Oops! Something went wrong. Please try again later.";
+                $error = 'Something went wrong. Please try again later.';
+                header('location: ../pages/account.php?message=failure&error=' . $error);
             }
 
             // Close statement
@@ -85,9 +85,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    // check for errors
+    $error = '';
+    if (!empty($username_err)) $error = $username_err;
+    elseif (!empty($password_err)) $error = $password_err;
+    elseif (!empty($login_err)) $error = $login_err;
+
+    // report error if one occured
+    if (!empty($error))
+        header('location: ../pages/account.php?message=failure&error=' . $error);
+
     // Close connection
     mysqli_close($conn);
 }
-?>
-
 ?>

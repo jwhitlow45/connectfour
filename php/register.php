@@ -73,13 +73,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
                 // Redirect to login page
-                header("location: ../pages/account.html");
+                header("location: ../pages/account.php?message=success");
             } else{
                 echo "Something went wrong. Please try again later.";
             }
             // Close statement
             mysqli_stmt_close($stmt);
         }
+    } else {
+        $error = '';
+        // prioritize reporting of username error, then password errors
+        if (!empty($username_err)) $error = $username_err;
+        elseif (!empty($password_err)) $error = $password_err;
+        elseif (!empty($password_confirm_err)) $error = $password_confirm_err;
+        // redirect to account page using get request to report error
+        header("location: ../pages/account.php?message=failure&error=" . $error . "");
     }
     // Close connection
     mysqli_close($conn);
