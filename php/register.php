@@ -62,23 +62,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check input errors before inserting in database
     if(empty($username_err) && empty($password_err) && empty($password_confirm_err)){
         // Prepare an insert statement
-        $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
-        echo $sql;
-        if($stmt = mysqli_prepare($conn, $sql)){
+        $sql_users = "INSERT INTO users (username, password) VALUES (?, ?)";
+        $sql_stats = "INSERT INTO stats (username, wins, losses, draws, time_played) VALUES (?, 0, 0, 0, 0)";
+        if(($stmt_users = mysqli_prepare($conn, $sql_users)) && ($stmt_stats = mysqli_prepare($conn, $sql_stats))) {
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "ss", $param_username, $param_password);
+            mysqli_stmt_bind_param($stmt_users, "ss", $param_username, $param_password);
+            mysqli_stmt_bind_param($stmt_stats, "s", $param_username);
             // Set parameters
             $param_username = $username;
             $param_password = password_hash($password, PASSWORD_DEFAULT); // Creates a password hash
             // Attempt to execute the prepared statement
-            if(mysqli_stmt_execute($stmt)){
+            if(mysqli_stmt_execute($stmt_users) && mysqli_stmt_execute($stmt_stats)){
                 // Redirect to login page
                 header("location: ../pages/account.php?message=success");
             } else{
                 echo "Something went wrong. Please try again later.";
             }
             // Close statement
-            mysqli_stmt_close($stmt);
+            mysqli_stmt_close($stmt_users);
+            mysqli_stmt_close($stmt_stats);
         }
     } else {
         $error = '';
