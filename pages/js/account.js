@@ -24,7 +24,7 @@ function configureLoginPage() {
 }
 
 function showForms() {
-  const forms = document.getElementsByTagName('form');
+  const forms = document.getElementsByClassName('loggedout');
   for (let form of forms)
     form.hidden = 0;
 }
@@ -49,7 +49,7 @@ async function displayUserStats() {
   const user_stats = document.getElementsByClassName('user-stats');
   for (let stat of user_stats) stat.hidden = 0;
   const user_welcome = document.getElementById('user-welcome');
-  user_welcome.innerHTML = 'Welcome, <b>' + (await getUsername()) + '</b>!'
+  user_welcome.placeholder = await getUsername();
 }
 
 async function logout() {

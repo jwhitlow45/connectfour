@@ -1,7 +1,12 @@
 .menu-button {
-  max-width: 50%;
+  max-width: 60%;
 }
 
 #menu {
   margin-bottom: 10px;
+}
+
+.loggedin::placeholder {
+  text-align: center;
+  color: #13284c;
 }

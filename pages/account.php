@@ -9,14 +9,14 @@
   </head>
   <body>
     <div id="title">Account</div>
-    <form action="./../php/login.php" method="POST" hidden="1">
+    <form action="./../php/login.php" class="loggedout" method="POST" hidden="1">
       <table id="menu">
         <tr><td><input name="username" type="text" class="menu-button" placeholder="username"></td></tr>
         <tr><td><input name="password" type="password" class="menu-button" placeholder="password"></td></tr>
         <tr><td><input type="submit" value="Login" class="menu-button"></input></td></tr>
       </table>
     </form>
-    <form action="./../php/register.php" method="POST" hidden="1">
+    <form action="./../php/register.php" class="loggedout" method="POST" hidden="1">
       <table id="menu" class="register">
         <tr><td><input name="username" type="text" class="menu-button" placeholder="username"></td></tr>
         <tr><td><input name="password" type="password" class="menu-button" placeholder="password"></td></tr>
@@ -24,10 +24,12 @@
         <tr><td><input type="submit" value="Register" class="menu-button"></input></td></tr>
       </table>
     </form>
-    <table id="menu" class="user-stats" hidden="1">
-      <tr><td id="user-welcome" class="menu-button"></td></tr>
-      <tr><td id="logout" class="menu-button">Logout</td></tr>
-    </table>
+    <form class="user-stats" hidden="1">
+      <table id="menu">
+        <tr><td><input id="user-welcome" class="menu-button loggedin" readonly="readonly"></td></tr>
+        <tr><td><input id="logout" class="menu-button loggedin" readonly="readonly" placeholder="Logout"></td></tr>
+      </table>
+    </form>
     <div><a href="../index.html"><img id="back-button" src="../img/back.webp"></a></div>
     <?php
       session_start();
