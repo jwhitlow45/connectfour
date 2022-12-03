@@ -27,6 +27,10 @@
     <form class="user-stats" hidden="1">
       <table id="menu">
         <tr><td><input id="user-welcome" class="menu-button loggedin" readonly="readonly"></td></tr>
+        <tr><td><input id="user-wins" class="menu-button loggedin" readonly="readonly"></td></tr>
+        <tr><td><input id="user-losses" class="menu-button loggedin" readonly="readonly"></td></tr>
+        <tr><td><input id="user-draws" class="menu-button loggedin" readonly="readonly"></td></tr>
+        <tr><td><input id="user-time-played" class="menu-button loggedin" readonly="readonly"></td></tr>
         <tr><td><input id="logout" class="menu-button loggedin" readonly="readonly" placeholder="Logout"></td></tr>
       </table>
     </form>
