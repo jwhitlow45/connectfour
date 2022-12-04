@@ -42,7 +42,7 @@
       }
       if (isset($_GET['message'])) {
         if ($_GET['message'] == 'success')
-          echo alertString('Your account has been registerd!');
+          echo alertString('Your account has been registerd!\nPlease login using the account page.');
         elseif ($_GET['message'] == 'failure')
           echo alertString($_GET['error']);
       }
