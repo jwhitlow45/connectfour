@@ -143,12 +143,14 @@ class Board {
 
     // check for draw
     if (this.#nummoves == 42) {
+      result = -1;
       alerthtml.innerText = "Draw!";
       return true;
     }
 
     // check for win
     if (this.checkWin(row, col)) {
+      result = player;
       alerthtml.innerText = this.colors[player] + " wins!";
       return true;
     }
@@ -177,6 +179,7 @@ class Board {
 }
 
 var gameOver = false;
+let result;
 const board_size = board_sizes[localStorage.getItem("board-size")].split('x');
 const color0 = colors[localStorage.getItem("p0-color")];
 const color1 = colors[localStorage.getItem("p1-color")];
@@ -185,6 +188,8 @@ GameBoard.init();
 flipbutton.addEventListener('click', function() { handleFlip(); });
 
 function handleGameOver() {
+  // stop timer
+  clearInterval(gametime);
   // show button to play again
   replay.innerText = "Click here to play again!";
   replay.onclick = function() { window.location.reload(); }
@@ -195,6 +200,8 @@ function handleGameOver() {
     let newcell = cell.cloneNode(true);
     cell.parentNode.replaceChild(newcell, cell);
   }
+
+  updateDBStats();
 }
 
 function handleClick(eventid) {
@@ -254,10 +261,13 @@ function handleFlip() {
   // check for draw then winner
   if (winners[0] && winners[1]) {
     alerthtml.innerText = "Draw!";
+    result = -1;
   } else if (winners[0]) {
     alerthtml.innerText = GameBoard.colors[0] + " wins!";
+    result = 0;
   } else {
     alerthtml.innerText = GameBoard.colors[1] + " wins!";
+    result = 1;
   }
   gameOver = true;
   handleGameOver();
@@ -292,6 +302,34 @@ function hidePlacement(elemId) {
   if (targethtml == null) return;
   
   targethtml.innerHTML = "";
+}
+
+async function updateDBStats() {
+
+  // check if user is logged in
+  let isLoggedIn = await fetch('../php/loggedin.php', {
+    method: 'GET'
+  }).then((response => {
+    if (!response.ok) {
+      throw response;
+    }
+    return response.json();
+  }));
+
+  // don't update stats if user is not logged in
+  if (isLoggedIn == 0) return;
+
+  // calculate how many seconds elasped during the game
+  let time_elapsed = timecount.innerText.split(':');
+  let seconds = parseInt(time_elapsed[0]) * 60 + parseInt(time_elapsed[1]);
+  // add seconds to user's time played
+
+  // update stats in db
+  let url = '../php/updatestats.php?result=' + result + '&time=' + seconds;
+
+  let request = new XMLHttpRequest();
+  request.open('GET', url);
+  request.send();
 }
 
 var pageloadtime = new Date();
