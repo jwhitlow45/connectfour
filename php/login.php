@@ -9,7 +9,7 @@ session_start();
 
 // redirect to account page if logged in
 if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
-    header("location: ../pages/account.php?message=loggedin");
+    header("location: ../pages/account.html");
     exit;
 }
 
@@ -38,7 +38,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($username_err) && empty($password_err)) {
         // Prepare a select statement
         $sql = "SELECT id, username, password FROM users WHERE username = ?";
-        echo $sql;
         if ($stmt = mysqli_prepare($conn, $sql)) {
             // Bind variables to the prepared statement as parameters
             mysqli_stmt_bind_param($stmt, "s", $param_username);
@@ -65,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $_SESSION["id"] = $id;
                             $_SESSION["username"] = $username;
                             // Redirect user to account page
-                            header('location: ../pages/account.php?message=loggedin');
+                            echo json_encode('Succesfully logged in as ' . $_SESSION['username'] . '!');
                         } else {
                             // Password is not valid, display a generic error message
                             $login_err = "Invalid username or password.";
@@ -77,7 +76,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             } else {
                 $error = 'Something went wrong. Please try again later.';
-                header('location: ../pages/account.php?message=failure&error=' . $error);
             }
 
             // Close statement
@@ -93,8 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // report error if one occured
     if (!empty($error))
-        header('location: ../pages/account.php?message=failure&error=' . $error);
-
+        echo json_encode($error);
     // Close connection
     mysqli_close($conn);
 }

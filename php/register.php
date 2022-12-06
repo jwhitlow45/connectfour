@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $username = trim($_POST["username"]);
                 }
             } else{
-                echo "Something went wrong. Please try again later.";
+                echo json_encode("Something went wrong. Please try again later.");
             }
             // Close statement
             mysqli_stmt_close($stmt);
@@ -74,9 +74,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt_users) && mysqli_stmt_execute($stmt_stats)){
                 // Redirect to login page
-                header("location: ../pages/account.php?message=success");
-            } else{
-                echo "Something went wrong. Please try again later.";
+                echo json_encode("Succesfully created your account! Make sure to login!");
+            } else {
+                echo json_encode("Something went wrong. Please try again later.");
             }
             // Close statement
             mysqli_stmt_close($stmt_users);
@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         elseif (!empty($password_err)) $error = $password_err;
         elseif (!empty($password_confirm_err)) $error = $password_confirm_err;
         // redirect to account page using get request to report error
-        header("location: ../pages/account.php?message=failure&error=" . $error . "");
+        echo json_encode($error);
     }
     // Close connection
     mysqli_close($conn);

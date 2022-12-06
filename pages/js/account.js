@@ -95,4 +95,41 @@ function getStats() {
   });
 }
 
+// add event listeners for login and logout
+const login_form = document.getElementById('login-form');
+const login_submit = document.getElementById('login-submit');
+const register_form = document.getElementById('register-form');
+const register_submit = document.getElementById('register-submit');
+
+login_submit.addEventListener('click', function() { login(); });
+register_submit.addEventListener('click', function() { register(); });
+
+async function handleFetch(url, form, reload=false) {
+  let formData = new FormData(form);
+  fetch(url, {
+    method: 'POST',
+    body: formData
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw response;
+    }
+    return response.json();
+  }).then((json) => {
+    alert(json);
+    if (reload) window.location.reload();
+  }).catch((err) => {
+    console.error(err);
+    alert('Something went wrong, please try again later!');
+  });
+}
+
+function login() {
+  handleFetch('../php/login.php', login_form, true);
+}
+
+function register() {
+  handleFetch('../php/register.php', register_form);
+}
+
 configureLoginPage();
