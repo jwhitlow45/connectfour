@@ -15,7 +15,7 @@
 * Visit `localhost/connectfour` in your browser
 * All databases will be created (if they do not already exist) upon registration, login, or visiting the 'Leaderboards' page.
 ## Timeline
-* Git history can be [here](https://github.com/jwhitlow45/connectfour/commits/main)
+* Git history can be found [here](https://github.com/jwhitlow45/connectfour/commits/main)
 
 | Week        | Description |
 | ----------- | ----------- |
