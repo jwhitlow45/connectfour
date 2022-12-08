@@ -78,7 +78,7 @@ class Board {
     }
   }
 
-  #inBounds(row, col) {
+  inBounds(row, col) {
     return row >= 0 && col >= 0 && row < this.numrows && col < this.numcols;
   }
 
@@ -99,7 +99,7 @@ class Board {
 
         let rowdir = move[0] * mult;
         let coldir = move[1] * mult;
-        while (this.#inBounds(rowcur + rowdir, colcur + coldir)) {
+        while (this.inBounds(rowcur + rowdir, colcur + coldir)) {
           rowcur += rowdir;
           colcur += coldir;
   
@@ -176,6 +176,122 @@ class Board {
     this.drawBoard();
     moveplayer.innerText = this.colors[this.playerMove];
   }
+
+  countDiscSequences(player, size) {
+    let sequences = 0;
+
+    // horizontal sequences
+    for (let i = 0; i < this.numrows; i++) {
+      let count = 0;
+      for (let j = 0; j < this.numcols; j++) {
+        if (this.grid[i][j] != player) {
+          count = 0;
+          continue;
+        }
+        count += 1
+        if (count >= size) {
+          sequences += 1;
+        }
+      }
+    }
+
+    // vertical sequences
+    for (let j = 0; j < this.numcols; j++) {
+      let count = 0;
+      for (let i = 0; i < this.numrows; i++) {
+        if (this.grid[i][j] != player) {
+          count = 0;
+          continue;
+        }
+        count += 1
+        if (count >= size) {
+          sequences += 1;
+        }
+      }
+    }
+
+    const dirs = [[1,1],[1,-1]];
+
+    // check top row in both diagonal directions
+    for (let dir of dirs) {
+      for (let col = 0; col <= this.numcols; col++) {
+        let count = 0;
+        let currow = 0;
+        let curcol = col;
+        if (this.grid[currow][curcol] == player) // start count at 1 if starting on player's tile
+          count++;
+        while (this.inBounds(currow + dir[0], curcol + dir[1])) {
+          currow += dir[0];
+          curcol += dir[1];
+
+          if (this.grid[currow][curcol] == player) {
+            count += 1;
+            if (count >= size) {
+              sequences += 1;
+              count = 0;
+            }
+          } else {
+            count = 0;
+          }
+        }
+      }
+    }
+
+    let rows = [];  // get row which need to be checked on left and right side of grid
+    for (let i = 1; i <= this.grid[0].length - size; i++) {
+      rows.push(i);
+    }
+
+    for (let row of rows) { // count diagonals starting from left side of grid
+      let dir = [1,1];
+      let currow = row;
+      let curcol = 0;
+      let count = 0;
+      if (this.grid[currow][curcol] == player) {
+        count += 1;
+      }
+      while (this.inBounds(currow + dir[0], curcol + dir[1])) {
+        currow += dir[0];
+        curcol += dir[1];
+
+        if (this.grid[currow][curcol] == player) {
+          count += 1;
+          if (count >= size) {
+            sequences += 1;
+            count = 0;
+          }
+        } else {
+          count = 0;
+        }
+      }
+    }
+
+    for (let row of rows) { // count diagonals starting from right side of grid
+      let dir = [1,-1];
+      let currow = row;
+      let curcol = this.numcols - 1;
+      let count = 0;
+      if (this.grid[currow][curcol] == player) {
+        count += 1;
+      }
+      while (this.inBounds(currow + dir[0], curcol + dir[1])) {
+        currow += dir[0];
+        curcol += dir[1];
+
+        if (this.grid[currow][curcol] == player) {
+          count += 1;
+          if (count >= size) {
+            sequences += 1;
+            count = 0;
+          }
+        } else {
+          count = 0;
+        }
+      }
+    }
+
+    return sequences;
+  }
 }
 
 var gameOver = false;
@@ -183,6 +299,9 @@ let result;
 const board_size = board_sizes[localStorage.getItem("board-size")].split('x');
 const color0 = colors[localStorage.getItem("p0-color")];
 const color1 = colors[localStorage.getItem("p1-color")];
+const three_count_labels = document.getElementsByClassName('three-count-label');
+three_count_labels[0].innerText = 'Connect Three ' + color0;
+three_count_labels[1].innerText = 'Connect Three ' + color1;
 const GameBoard = new Board(parseInt(board_size[0]), parseInt(board_size[1]), color0, color1);
 GameBoard.init();
 flipbutton.addEventListener('click', function() { handleFlip(); });
@@ -208,6 +327,9 @@ function handleClick(eventid) {
   if (!gameOver) {
     let coords = eventid.split("-");
     gameOver = GameBoard.move(parseInt(coords[1]));
+    const three_counts = document.getElementsByClassName('three-count');
+    three_counts[0].innerText = GameBoard.countDiscSequences(0, 3);
+    three_counts[1].innerText = GameBoard.countDiscSequences(1, 3);
 
     if (!GameBoard.p0flip && GameBoard.peekPlayerToMove() == 0) {
       flipbutton.style.opacity = '50%';
@@ -240,6 +362,9 @@ function handleFlip() {
   GameBoard.flip();
   flipbutton.style.opacity = '50%';
   alerthtml.innerHTML = "Player " + GameBoard.colors[player] + " used flip!";
+  const three_counts = document.getElementsByClassName('three-count');
+  three_counts[0].innerText = GameBoard.countDiscSequences(0, 3);
+  three_counts[1].innerText = GameBoard.countDiscSequences(1, 3);
 
   let winners = [false, false];
 

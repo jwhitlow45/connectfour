@@ -18,12 +18,16 @@
     <table id="board"></table>
     <table class="hud">
       <tr>
-        <td><h2 id="alert"></h2></td>
+        <td><h2 class="hud-label three-count-label"></h2><h2 id="p0-three-count" class="hud-num three-count">0</h2></td>
+        <td><h2 class="hud-label three-count-label"></h2><h2 id="p1-three-count" class="hud-num three-count">0</h2></td>
       </tr>
       <tr>
-        <td><h2 id="replay"></h2></td>
+        <td colspan="2"><h2 id="alert"></h2></td>
       </tr>
-      <div><a href="../index"><img id="back-button" src="../img/back.webp"></a></div>
+      <tr>
+        <td colspan="2"><h2 id="replay"></h2></td>
+      </tr>
+      <tr><td colspan="2"><div><a href="../index"><img id="back-button" src="../img/back.webp"></a></div></td></tr>
     </table>
     <script src="./js/play.js" type="module"></script>
   </body>
