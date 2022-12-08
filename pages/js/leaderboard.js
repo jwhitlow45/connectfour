@@ -67,6 +67,7 @@ async function populateLeaderboard() {
   
   const categories = ['wins', 'losses', 'draws', 'time_played'];
 
+  let current_username = await getUsername();
   let leaderboard = await getTopUsers()
   for (let cat of categories) {
     createHeader(cat.replace('_', ' '));
@@ -86,12 +87,9 @@ async function populateLeaderboard() {
         value = user['value'];
       }
 
-      await createLeaderboardEntry(user['username'], await getUsername(), value);
+      await createLeaderboardEntry(user['username'], current_username, value);
     }
   }
 }
 
-
-
-/* <tr><td><input id="user-wins" class="menu-button loggedin" readonly="readonly"></td></tr> */
 populateLeaderboard()
