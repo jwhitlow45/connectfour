@@ -304,7 +304,7 @@ three_count_labels[0].innerText = 'Connect Three ' + color0;
 three_count_labels[1].innerText = 'Connect Three ' + color1;
 const GameBoard = new Board(parseInt(board_size[0]), parseInt(board_size[1]), color0, color1);
 GameBoard.init();
-flipbutton.addEventListener('click', function() { handleFlip(); });
+flipbutton.addEventListener('click', handleFlip);
 
 function handleGameOver() {
   // stop timer
@@ -314,11 +314,14 @@ function handleGameOver() {
   replay.onclick = function() { window.location.reload(); }
 
   // remove event listeners once game is over by cloning and replacing cells
+  // this is done this way to prevent the need to know the exact function called by each event listener
   let cells = document.getElementsByClassName('cell');
   for (let cell of cells) {
     let newcell = cell.cloneNode(true);
     cell.parentNode.replaceChild(newcell, cell);
   }
+  let newflipbutton = flipbutton.cloneNode(true);
+  flipbutton.parentNode.replaceChild(newflipbutton, flipbutton);
 
   updateDBStats();
 }
