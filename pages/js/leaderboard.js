@@ -1,5 +1,5 @@
 function getTopUsers() {
-  return fetch('../php/getleaderboard.php', {
+  return fetch('../php/getleaderboardinit.php', {
     method: 'GET'
   })
   .then((response) => {
@@ -15,14 +15,17 @@ function getTopUsers() {
 }
 
 async function populateLeaderboard() {
-  function createLeaderboardEntry(username, value) {
+  async function createLeaderboardEntry(username, current_username, value) {
     const stat = document.createElement('input')
     stat.classList.add('menu-button');
     stat.readOnly = 'readonly';
     const leaderboard_html = document.getElementById('menu');
   
     stat.placeholder = value + ' - ' + username;
-        
+    if (username == current_username) {
+      stat.style.backgroundColor = 'yellow';
+    }
+
     const data_html = document.createElement('td');
     data_html.appendChild(stat);
     const row_html = document.createElement('tr');
@@ -45,6 +48,22 @@ async function populateLeaderboard() {
     row_html.appendChild(data_html);
     leaderboard_html.appendChild(row_html);
   }
+
+  function getUsername() {
+    return fetch('../php/getusername.php', {
+      method: 'GET'
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw response;
+      }
+      return response.json();
+    }).then((json) => {
+      return json;
+    }).catch((err) => {
+      console.error(err);
+    });
+  }
   
   const categories = ['wins', 'losses', 'draws', 'time_played'];
 
@@ -66,7 +85,8 @@ async function populateLeaderboard() {
       } else {
         value = user['value'];
       }
-      createLeaderboardEntry(user['username'], value);
+
+      await createLeaderboardEntry(user['username'], await getUsername(), value);
     }
   }
 }
