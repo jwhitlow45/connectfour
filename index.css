@@ -4,23 +4,40 @@ html {
   font-family: 'Product Sans', sans-serif;
 }
 
+.fs-image {
+  width: 50px;
+}
+
+#bulldog-image {
+  padding-right: 20px;
+}
+
+#seal-image {
+  padding-left: 20px;
+}
+
 #title {
+  display: flex;
   text-align: center;
   font-size: 75px;
   color: white;
   
   background-color: #b1102b;
   
-  width: 450px;
+  width: 550px;
   margin: auto;
   border-radius: 50px;
   margin-bottom: 10px;
+
+  justify-content: center;
+  align-items: center;
+  
 }
 
 #menu {
   background-color: #b1102b;
   border-radius: 50px;
-  width: 500px;
+  width: 550px;
 }
 
 table {
