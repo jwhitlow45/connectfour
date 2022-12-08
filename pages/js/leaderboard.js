@@ -15,9 +15,10 @@ function getTopUsers() {
 }
 
 async function populateLeaderboard() {
-  async function createLeaderboardEntry(username, current_username, value) {
+  async function createLeaderboardEntry(username, current_username, value, category) {
     const stat = document.createElement('input')
     stat.classList.add('menu-button');
+    stat.classList.add('leaderboard-entry');
     stat.readOnly = 'readonly';
     const leaderboard_html = document.getElementById('menu');
   
@@ -30,13 +31,16 @@ async function populateLeaderboard() {
     data_html.appendChild(stat);
     const row_html = document.createElement('tr');
     row_html.appendChild(data_html);
-    leaderboard_html.appendChild(row_html);
+
+    const category_div = document.getElementById(category.replace('_', '-') + '-container');
+    category_div.appendChild(row_html);
   }
 
   function createHeader(title) {
     const stat = document.createElement('input')
     stat.classList.add('menu-button');
     stat.classList.add('leaderboard-header');
+    stat.classList.add(title.replace(' ', '-') + '-header');
     stat.readOnly = 'readonly';
     const leaderboard_html = document.getElementById('menu');
   
@@ -47,6 +51,10 @@ async function populateLeaderboard() {
     const row_html = document.createElement('tr');
     row_html.appendChild(data_html);
     leaderboard_html.appendChild(row_html);
+
+    const category_div = document.createElement('div');
+    category_div.id = title.replace(' ', '-') + '-container';
+    leaderboard_html.appendChild(category_div);
   }
 
   function getUsername() {
@@ -87,9 +95,10 @@ async function populateLeaderboard() {
         value = user['value'];
       }
 
-      await createLeaderboardEntry(user['username'], current_username, value);
+      await createLeaderboardEntry(user['username'], current_username, value, cat);
     }
   }
 }
+
 
 populateLeaderboard()
