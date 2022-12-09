@@ -409,6 +409,12 @@ function handleHint(player) {
   let newBoards = expandBoardStates([GameBoard], player);
   let hint = findHint(newBoards);  
   if (displayHint(hint)) return;
+
+  // blocking hint
+  let opponent = Math.abs(player - 1);
+  newBoards = expandBoardStates([GameBoard], opponent);
+  hint = findHint(newBoards);
+  if (displayHint(hint)) return;
 }
 
 function handleFlip() {
