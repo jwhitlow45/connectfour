@@ -86,6 +86,8 @@ class Board {
     // check every direction (left, right, up, down, diags) for win
     let moves = [[0,1], [1,0], [1,1], [1,-1]];
     let player = this.grid[row][col];
+    if (player == undefined)
+      return false;
 
     for (let move of moves) {
       let count = 1
@@ -333,6 +335,7 @@ function handleClick(eventid) {
     const three_counts = document.getElementsByClassName('three-count');
     three_counts[0].innerText = GameBoard.countDiscSequences(0, 3);
     three_counts[1].innerText = GameBoard.countDiscSequences(1, 3);
+    handleHint(GameBoard.peekPlayerToMove());
 
     if (!GameBoard.p0flip && GameBoard.peekPlayerToMove() == 0) {
       flipbutton.style.opacity = '50%';
@@ -344,6 +347,50 @@ function handleClick(eventid) {
   }
   if (gameOver) {
     handleGameOver();
+  }
+}
+
+function handleHint(player) {
+  function deepCopy(obj) {
+    return JSON.parse(JSON.stringify(obj));
+  }
+
+  let copiedBoard = deepCopy(GameBoard.grid); // deep copy board to ensure we don't break the original board
+  let newBoards = [];
+  for (let i = 0; i < board_size[1]; i++) {
+    let newBoardObj = new Board(board_size[0], board_size[1], color0, color1);
+    newBoardObj.grid = deepCopy(copiedBoard);  // deep copy again to ensure separate board instances
+
+    // make prospective move and place resulting board state into new boards
+    let row = newBoardObj.findMoveRow(i);
+    if (row == -1)  // if move is invalid don't check
+      continue;
+    newBoardObj.grid[row][i] = player;
+    newBoards.push(newBoardObj);
+  }
+
+  // search for win condition in every prospective board state
+  let hint = -1;
+  for (let i = 0; i < newBoards.length; i++) {
+    if (hint != -1) break;  // terminate early if hint is found
+    for (let row = 0; row < newBoards[i].numrows; row++) {
+      if (hint != -1) break;
+      for (let col = 0; col < newBoards[i].numcols; col++) {
+        if (newBoards[i].checkWin(row, col)) {
+          hint = col;
+          break;
+        }
+      }
+    }
+  }
+
+  if (hint != -1) {
+    let playerStr;
+    if (player == 0)
+      playerStr = color0;
+    else
+      playerStr = color1;
+    alerthtml.innerHTML = playerStr + ' hint: column ' + (hint + 1);
   }
 }
 
@@ -368,6 +415,7 @@ function handleFlip() {
   const three_counts = document.getElementsByClassName('three-count');
   three_counts[0].innerText = GameBoard.countDiscSequences(0, 3);
   three_counts[1].innerText = GameBoard.countDiscSequences(1, 3);
+  handleHint(GameBoard.peekPlayerToMove());
 
   let winners = [false, false];
 
