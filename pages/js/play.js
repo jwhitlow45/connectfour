@@ -335,7 +335,8 @@ function handleClick(eventid) {
     const three_counts = document.getElementsByClassName('three-count');
     three_counts[0].innerText = GameBoard.countDiscSequences(0, 3);
     three_counts[1].innerText = GameBoard.countDiscSequences(1, 3);
-    handleHint(GameBoard.peekPlayerToMove());
+    
+    if (!gameOver) handleHint(GameBoard.peekPlayerToMove());
 
     if (!GameBoard.p0flip && GameBoard.peekPlayerToMove() == 0) {
       flipbutton.style.opacity = '50%';
@@ -404,6 +405,7 @@ function handleHint(player) {
     return false;
   }
 
+  // winning hint
   let newBoards = expandBoardStates([GameBoard], player);
   let hint = findHint(newBoards);  
   if (displayHint(hint)) return;
@@ -430,7 +432,6 @@ function handleFlip() {
   const three_counts = document.getElementsByClassName('three-count');
   three_counts[0].innerText = GameBoard.countDiscSequences(0, 3);
   three_counts[1].innerText = GameBoard.countDiscSequences(1, 3);
-  handleHint(GameBoard.peekPlayerToMove());
 
   let winners = [false, false];
 
@@ -447,7 +448,10 @@ function handleFlip() {
   }
 
   // if neither player wins then terminate early
-  if (!(winners[0] || winners[1])) return;
+  if (!(winners[0] || winners[1])) {
+    handleHint(GameBoard.peekPlayerToMove());
+    return;
+  }
 
   // check for draw then winner
   if (winners[0] && winners[1]) {
