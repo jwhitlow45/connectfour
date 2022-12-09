@@ -355,43 +355,58 @@ function handleHint(player) {
     return JSON.parse(JSON.stringify(obj));
   }
 
-  let copiedBoard = deepCopy(GameBoard.grid); // deep copy board to ensure we don't break the original board
-  let newBoards = [];
-  for (let i = 0; i < board_size[1]; i++) {
-    let newBoardObj = new Board(board_size[0], board_size[1], color0, color1);
-    newBoardObj.grid = deepCopy(copiedBoard);  // deep copy again to ensure separate board instances
-
-    // make prospective move and place resulting board state into new boards
-    let row = newBoardObj.findMoveRow(i);
-    if (row == -1)  // if move is invalid don't check
-      continue;
-    newBoardObj.grid[row][i] = player;
-    newBoards.push(newBoardObj);
+  function expandBoardStates(boardStateList, curplayer) {
+    let newBoards = [];
+    for (let board of boardStateList) {
+      let copiedBoard = deepCopy(board.grid); // deep copy board to ensure we don't break the original board
+      for (let i = 0; i < board_size[1]; i++) {
+        let newBoardObj = new Board(board_size[0], board_size[1], color0, color1);
+        newBoardObj.grid = deepCopy(copiedBoard);  // deep copy again to ensure separate board instances
+        
+        // make prospective move and place resulting board state into new boards
+        let row = newBoardObj.findMoveRow(i);
+        if (row == -1)  // if move is invalid don't check
+        continue;
+        newBoardObj.grid[row][i] = curplayer;
+        newBoards.push(newBoardObj);
+      }
+    }
+    return newBoards;
   }
 
-  // search for win condition in every prospective board state
-  let hint = -1;
-  for (let i = 0; i < newBoards.length; i++) {
-    if (hint != -1) break;  // terminate early if hint is found
-    for (let row = 0; row < newBoards[i].numrows; row++) {
-      if (hint != -1) break;
-      for (let col = 0; col < newBoards[i].numcols; col++) {
-        if (newBoards[i].checkWin(row, col)) {
-          hint = col;
-          break;
+  function findHint(boardStateList) {
+    let hint = -1;
+    for (let i = 0; i < boardStateList.length; i++) {
+      if (hint != -1) break;  // terminate early if hint is found
+      for (let row = 0; row < boardStateList[i].numrows; row++) {
+        if (hint != -1) break;
+        for (let col = 0; col < boardStateList[i].numcols; col++) {
+          if (boardStateList[i].checkWin(row, col)) {
+            hint = col;
+            break;
+          }
         }
       }
     }
+    return hint;
   }
 
-  if (hint != -1) {
-    let playerStr;
-    if (player == 0)
-      playerStr = color0;
-    else
-      playerStr = color1;
-    alerthtml.innerHTML = playerStr + ' hint: column ' + (hint + 1);
+  function displayHint(hint){
+    if (hint != -1) {
+      let playerStr;
+      if (player == 0)
+        playerStr = color0;
+      else
+        playerStr = color1;
+      alerthtml.innerHTML = playerStr + ' hint: column ' + (hint + 1);
+      return true;
+    }
+    return false;
   }
+
+  let newBoards = expandBoardStates([GameBoard], player);
+  let hint = findHint(newBoards);  
+  if (displayHint(hint)) return;
 }
 
 function handleFlip() {
