@@ -22,3 +22,4 @@
 | 10/17/2022  | Create main connect four game and add options to change colors and board size. Create menus and their themes. |
 | 11/14/2022  | Implement 'flip' superpower and add menu animations. Move database credentials to gitignored ini file to prevent leaking credentials to github.  |
 | 11/28/2022  | Add login system, registration system, stat tracking, leaderboard, help page, and contact page. Implement database fault tolerance. |
+| 12/05/2022  | Add connect 3 counters and hints to gameplay. |
