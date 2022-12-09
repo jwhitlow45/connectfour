@@ -32,8 +32,8 @@ async function createLeaderboardEntry(username, current_username, value, categor
   const stat = document.createElement('input')
   stat.classList.add('menu-button');
   stat.classList.add('leaderboard-entry');
+  stat.classList.add(category.replace('_', '-') + '-entry');
   stat.readOnly = 'readonly';
-  const leaderboard_html = document.getElementById('menu');
 
   stat.placeholder = value + ' - ' + username;
   if (username == current_username) {
@@ -43,10 +43,10 @@ async function createLeaderboardEntry(username, current_username, value, categor
   const data_html = document.createElement('td');
   data_html.appendChild(stat);
   const row_html = document.createElement('tr');
+  row_html.classList.add(category.replace('_', '-') + '-row-entry');
   row_html.appendChild(data_html);
 
-  const category_div = document.getElementById(category.replace('_', '-') + '-container');
-  category_div.appendChild(row_html);
+  return row_html;
 }
 
 async function populateLeaderboard() {
@@ -82,7 +82,7 @@ async function populateLeaderboard() {
       header.addEventListener('click', function() { toggleCategorySort(category) });
     }
   }
-  
+
   const categories = ['wins', 'losses', 'draws', 'time_played'];
 
   let current_username = await getUsername();
@@ -94,22 +94,28 @@ async function populateLeaderboard() {
       let value;
 
       // if current category is time played then format to hour-min-sec time
-      if (cat ==  categories[3]) {
-        let seconds = user['value'];
-        let hours = Math.floor(seconds / 3600);
-        seconds %= 3600;
-        let minutes = Math.floor(seconds / 60);
-        seconds %= 60;
-        value = `${hours}h${minutes}m${seconds}s`
+      if (cat == categories[3]) {
+        value = formatTime(user['value']);
       } else {
         value = user['value'];
       }
 
-      await createLeaderboardEntry(user['username'], current_username, value, cat);
+      const category_div = document.getElementById(cat.replace('_', '-') + '-container');
+      const entry = await createLeaderboardEntry(user['username'], current_username, value, cat);
+      category_div.appendChild(entry);
     }
   }
 
   createHeaderEventListeners();
+}
+
+function formatTime(value) {
+  let seconds = value;
+  let hours = Math.floor(seconds / 3600);
+  seconds %= 3600;
+  let minutes = Math.floor(seconds / 60);
+  seconds %= 60;
+  return `${hours}h${minutes}m${seconds}s`
 }
 
 async function sortCategory(category, isAscend) {
@@ -132,10 +138,16 @@ async function sortCategory(category, isAscend) {
 
   category = category.replace('_', '-');
   const category_container = document.getElementById(category + '-container');
-  category_container.innerHTML = '';
+  const category_entries = document.getElementsByClassName(category + '-row-entry');
 
-  for (let result of results) {
-    createLeaderboardEntry(result['username'], await getUsername(), result['value'], category);
+  for (let i = 0; i < results.length; i++) {
+    // format time
+    let value;
+    if (category == 'time-played') value = formatTime(results[i]['value']);
+    else value = results[i]['value'];
+
+    let entry = await createLeaderboardEntry(results[i]['username'], await getUsername(), value, category);
+    category_container.replaceChild(entry, category_entries[i]);
   }
 }
 
