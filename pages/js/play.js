@@ -358,6 +358,7 @@ function handleHint(player) {
 
   function expandBoardStates(boardStateList, curplayer) {
     let newBoards = [];
+    let moves = [];
     for (let board of boardStateList) {
       let copiedBoard = deepCopy(board.grid); // deep copy board to ensure we don't break the original board
       for (let i = 0; i < board_size[1]; i++) {
@@ -370,12 +371,13 @@ function handleHint(player) {
         continue;
         newBoardObj.grid[row][i] = curplayer;
         newBoards.push(newBoardObj);
+        moves.push(i);
       }
     }
-    return newBoards;
+    return [newBoards, moves];
   }
 
-  function findHint(boardStateList) {
+  function findHint(boardStateList, moves) {
     let hint = -1;
     for (let i = 0; i < boardStateList.length; i++) {
       if (hint != -1) break;  // terminate early if hint is found
@@ -383,7 +385,7 @@ function handleHint(player) {
         if (hint != -1) break;
         for (let col = 0; col < boardStateList[i].numcols; col++) {
           if (boardStateList[i].checkWin(row, col)) {
-            hint = col;
+            hint = moves[i];
             break;
           }
         }
@@ -406,14 +408,16 @@ function handleHint(player) {
   }
 
   // winning hint
-  let newBoards = expandBoardStates([GameBoard], player);
-  let hint = findHint(newBoards);  
+  let newBoards;
+  let moves;
+  [newBoards, moves] = expandBoardStates([GameBoard], player);
+  let hint = findHint(newBoards, moves);  
   if (displayHint(hint)) return;
 
   // blocking hint
   let opponent = Math.abs(player - 1);
-  newBoards = expandBoardStates([GameBoard], opponent);
-  hint = findHint(newBoards);
+  [newBoards, moves] = expandBoardStates([GameBoard], opponent);
+  hint = findHint(newBoards, moves);
   if (displayHint(hint)) return;
 }
 
